@@ -19,7 +19,7 @@ jobs:
       id: create
       uses: atlassian/gajira-create@master
       with:
-        project: Dependency
+        project: DEP
         issuetype: Task
         summary: |
           Dependency scan result
