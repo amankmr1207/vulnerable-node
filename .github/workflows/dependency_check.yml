@@ -21,8 +21,8 @@ jobs:
           path: output.json
       - name: Getting results
         run: |
-          cat results.json
+          cat output.json
       - name: curl
         uses: wei/curl@v1
         with:
-            args: --location --request POST 'https://amankmr1207.atlassian.net/rest/api/3/issue/${{ steps.search.outputs.issue }}/attachments' -u 'amankmr1207@gmail.com:${{ secrets.JIRA }}' -H 'X-Atlassian-Token:no-check' --form 'file=@"results.csv"'     
+            args: --location --request POST 'https://amankmr1207.atlassian.net/rest/api/3/issue/${{ steps.search.outputs.issue }}/attachments' -u 'amankmr1207@gmail.com:${{ secrets.JIRA }}' -H 'X-Atlassian-Token:no-check' --form 'file=@"output.csv"'     
