@@ -26,7 +26,6 @@ jobs:
           SCA Security Scan ${{ github.repository }} || Pull Request No: ${{github.event.number}} 
          description: |
           Security Scan for terraform pull request https://github.com/${{ github.repository }}/pull/${{github.event.number}}
-         fields: '{"assignee": {"name":"amankmr1207@gmail.com"}}'
         
       - name: Transition issue
         uses: atlassian/gajira-transition@master
