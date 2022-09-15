@@ -20,7 +20,7 @@ jobs:
         id: create
         uses: atlassian/gajira-create@master
         with:
-         project: Dep
+         project: DEP
          issuetype: Task
          summary: |
           SCA Security Scan ${{ github.repository }} || Pull Request No: ${{github.event.number}} 
