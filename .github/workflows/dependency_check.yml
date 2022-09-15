@@ -7,6 +7,34 @@ jobs:
       - uses: actions/checkout@master
       - name: Run npm
         run: npm install 
+      - name: Install snyk
+        run: npm i snyk
+      - name: Login
+        uses: atlassian/gajira-login@master
+        env:
+         JIRA_BASE_URL: https://amankmr1207.atlassian.net
+         JIRA_USER_EMAIL: amankmr1207@gmail.com
+         JIRA_API_TOKEN: ${{ secrets.JIRA }}
+
+      - name: Create
+        id: create
+        uses: atlassian/gajira-create@master
+        with:
+         project: TEST
+         issuetype: Task
+         summary: |
+          SCA Security Scan ${{ github.repository }} || Pull Request No: ${{github.event.number}} 
+         description: |
+          Security Scan for terraform pull request https://github.com/${{ github.repository }}/pull/${{github.event.number}}
+         fields: '{"assignee": {"name":"amankmr1207@gmail.com"}}'
+        
+      - name: Transition issue
+        uses: atlassian/gajira-transition@master
+        with:
+         issue: ${{ steps.create.outputs.issue }}
+         transition: "In progress"
+    
+
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         continue-on-error: true
@@ -14,9 +42,15 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high --json-file-output=snyk.json
-      - name: Show output
-        run: cat snyk.json
+
+          
       - name: curl
         uses: wei/curl@v1
         with:
-            args: --location --request POST 'https://amankmr1207.atlassian.net/rest/api/3/issue/${{ steps.search.outputs.issue }}/attachments' -u 'amankmr1207@gmail.com:${{ secrets.JIRA }}' -H 'X-Atlassian-Token:no-check' --form file=@"snyk.csv"     
+         args: --location --request POST 'https://amankmr1207.atlassian.net/rest/api/3/issue/${{ steps.create.outputs.issue }}/attachments' -u 'amankmr1207@gmail.com:${{ secrets.JIRA }}' -H 'X-Atlassian-Token:no-check' --form 'file=@"snyk.json"'
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
